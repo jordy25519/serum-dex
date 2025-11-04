@@ -548,7 +548,6 @@ impl<'ob> OrderBookState<'ob> {
         self.market_state.pc_fees_accrued += net_fees;
         self.market_state.pc_deposits_total -= net_fees_before_referrer_rebate;
 
-
         if !done {
             if let Some(coin_qty_remaining) = NonZeroU64::new(unfilled_qty) {
                 return Ok(Some(OrderRemaining {

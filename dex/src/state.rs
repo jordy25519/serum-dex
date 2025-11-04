@@ -1,8 +1,11 @@
 #![cfg_attr(not(feature = "program"), allow(unused))]
 use num_enum::TryFromPrimitive;
 use std::{
-    cell::RefMut, convert::identity, convert::TryInto, mem::size_of, num::NonZeroU64, ops::Deref,
-    ops::DerefMut,
+    cell::RefMut,
+    convert::{identity, TryFrom, TryInto},
+    mem::size_of,
+    num::NonZeroU64,
+    ops::{Deref, DerefMut},
 };
 
 use arrayref::{array_ref, array_refs, mut_array_refs};
@@ -23,7 +26,7 @@ use spl_token::error::TokenError;
 
 use crate::{
     critbit::Slab,
-    error::{DexErrorCode, DexResult, SourceFileId, DexError},
+    error::{DexError, DexErrorCode, DexResult, SourceFileId},
     fees::{self, FeeTier},
     instruction::{
         disable_authority, fee_sweeper, msrm_token, srm_token, CancelOrderInstructionV2,
@@ -577,7 +580,7 @@ impl MarketState {
     }
 
     fn pubkey(&self) -> Pubkey {
-        Pubkey::new(cast_slice(&identity(self.own_address) as &[_]))
+        Pubkey::try_from(cast_slice(&identity(self.own_address) as &[_])).unwrap()
     }
 }
 
@@ -2757,7 +2760,7 @@ impl State {
 
         // Amount that user deposits into the program
         let deposit_amount;
-        // Amount that user receives after the exchange 
+        // Amount that user receives after the exchange
         let withdraw_amount;
 
         // Token accounts for transfers
@@ -3066,7 +3069,7 @@ impl State {
                         }
                         return Err(err);
                     }
-                    _ => return Err(err)
+                    _ => return Err(err),
                 }
             }
         }
